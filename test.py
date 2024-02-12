@@ -1,6 +1,8 @@
 import pandas as pd
-import filter.df_to_sql as df_to_sql
-from models import sqlite_db, scrutinizer
+import filter.test_results_chemical as test_results_chemical
+from models import scrutinizer, database
+import os
+import peewee as pw
 
 def show_data(srt: scrutinizer) -> None:
     """ 临时展示测试数据
@@ -24,10 +26,15 @@ def show_data(srt: scrutinizer) -> None:
 if __name__ == "__main__":
     # 连接测试数据库
     test_db = "test.db"
-    db = sqlite_db(test_db)
+    
+    # 设置测试环境 - 数据库名称
+    os.environ.setdefault('database', test_db)
+    # print(os.environ.get("database"))
 
     test1_name = "检测结果-化学因素"
     chemical_test = scrutinizer(test_db, test1_name, "test/test.xlsx", 2)
     # show_data(chemical_test)
-    df_to_sql.df_to_sql(db, chemical_test)
-    df_to_sql.add_test_results_chemical_PK(db, chemical_test)
+    test_results_chemical.df_to_sql(database, chemical_test)
+    # df_to_sql.add_test_results_chemical_PK(db, chemical_test)
+
+    database.close()
