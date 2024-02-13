@@ -1,6 +1,5 @@
-from sqlite3 import IntegrityError
 from models import scrutinizer, chemical
-from utils import df_to_list, format_print
+from utils import df_to_list, general_preprocessing_filter
 import peewee as pw
 
 
@@ -12,30 +11,16 @@ def df_to_sql(db: pw.Database, srt: scrutinizer) -> None:
     """
     # 创建表格
     with db:
+        # 删除已有表格，防止数据重复
+        db.drop_tables([chemical])
         db.create_tables([chemical])
 
-    data = df_to_list(srt.data)
-    # print(data)
-    # chemicals = [chemical{db.database, unit_name=elem[0], post=elem[1], detection_point=elem[2],
-    #                       detection_project=elem[3], contact_time=elem[4],
-    #                       detection_value=elem[5], PC_STEL_MAC=elem[6], CTWA=elem[7],
-    #                       PC_TWA=elem[8]} for elem in data]
-    # print(chemicals)
+    # 调用通用预处理过滤器
+    data = general_preprocessing_filter(srt.data, [0, 1, 2])
+    # srt.data.ffill(axis=0)
 
-    # chemicals = []
-    # for elem in data:
-    #     try:
-    #         with db.atomic():
-    #             print(elem)
-    #             row = chemical.create(unit_name=elem[0], post=elem[1], detection_point=elem[2],
-    #                       detection_project=elem[3], contact_time=elem[4],
-    #                       detection_value=elem[5], PC_STEL_MAC=elem[6], CTWA=elem[7],
-    #                       PC_TWA=elem[8]
-    #             )
-    #             chemicals.append(row)
-    #     except IntegrityError:
-    #         format_print("WARNING", "数据重复")
-    # print(chemicals[0])
+    # dataframe -> list
+    data = df_to_list(srt.data)
 
     # 表的标题
     title = [
@@ -50,36 +35,6 @@ def df_to_sql(db: pw.Database, srt: scrutinizer) -> None:
         "PC_TWA",
     ]
 
-    # chemicals = [dict(zip(title, data[i])) for i in range(len(data))]
-    # chemical.insert_many(chemicals).execute()
-    chemical.insert_many(data, title)
+    # 数据写入Sqlite3数据库
+    chemical.insert_many(data, title).execute()
 
-
-
-def add_Pk(db: pw.Database, index_name: str, srt: scrutinizer, pk: str) -> None:
-    """增加SQLITE表格中主键模板
-    :param db: 数据库连接对象
-    :param index_name: 主键名称
-    :param srt: 数据对象
-    :param pk: 主键
-    """
-    db.cursor.execute(
-        "CREATE INDEX ':index_name' ON ':sheet_name' ':primary_key'",
-        {
-            "index_name": index_name,
-            "sheet_name": srt.sheet_name,
-            "primary_key": pk,
-        },
-    )
-
-
-def add_test_results_chemical_PK(db: pw.Database, srt: scrutinizer) -> None:
-    """后续操作：添加`检测结果-化学因素`表主键
-    :param db: 数据库连接对象
-    :param index_name: 主键名称
-    :param srt: 数据对象
-    :param pk: 主键元组
-    :return: None
-    """
-    add_Pk(db, "post_idx", srt, "('岗位','检测点')")
-    return

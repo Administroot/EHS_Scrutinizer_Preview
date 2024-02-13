@@ -1,4 +1,4 @@
-from pandas import DataFrame
+from pandas import DataFrame, isnull
 def df_to_list(df: DataFrame) -> list:
     """dataframe to list
     :param srt: scrutinizer
@@ -7,6 +7,7 @@ def df_to_list(df: DataFrame) -> list:
     X = df.iloc[:, :]
     X = (X.values)
     return X.tolist()
+
 
 def format_print(status: str, msg: str) -> None:
     """人性化的终端输出信息
@@ -21,20 +22,37 @@ def format_print(status: str, msg: str) -> None:
         print(f"\033[34m[{status}]\033[0m {msg}")
 
 
-def common_preprocessing_filter(df: DataFrame) -> DataFrame:
+def general_preprocessing_filter(df: DataFrame, column: list) -> DataFrame:
     """过滤器：通用预处理过滤器
     :param df: DataFrame
+    :param column: 需要进行padding操作的列号
     :return: 过滤处理后的数据对象
     """
-    # TODO: 后面编写逻辑
-    return fill_null(excel_row_padding(df))
+    return fill_null(excel_row_padding(df, column))
 
-def excel_row_padding(df: DataFrame) -> DataFrame:
+def excel_row_padding(df: DataFrame, column: list) -> DataFrame:
     """过滤器：填补合并单元格空值
     :param df: DataFrame
+    :param column: 需要进行padding操作的列号
     :return: 过滤处理后的数据对象
     """
-    # TODO: 后面编写逻辑
+    # 判断column中元素是否均为int
+    for i in column:
+        if not isinstance(i, int):
+            format_print("ERROR", "FUNC excel_row_padding: column中元素必须为int类型")
+            raise TypeError("column must be int")
+
+    for j in column:
+        for i in range(1, df.shape[0]):
+            last_row_val = df.iloc[i - 1, j]
+            this_row_val = df.iloc[i, j]
+            if isnull(this_row_val):
+                # print('(%d, %d)改为(%d, %d)值=%s' % (i, j, i-1, j, last_row_val))
+                # 与上一行值相同
+                df.iloc[i, j] = last_row_val
+
+    # print(df)
+    # print(df["unit_name"])
     return df
 
 
@@ -43,5 +61,7 @@ def fill_null(df: DataFrame) -> DataFrame:
     :param df: DataFrame
     :return: 过滤处理后的数据对象
     """
-    # TODO: 后面编写逻辑
+    # df.replace("'--", nan).replace('/', nan)
+    df.where(df != "/", inplace=True)
+    df.where(df != "'--", inplace=True)
     return df

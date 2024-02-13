@@ -1,7 +1,7 @@
 import pandas as pd
 from utils import format_print
+from config import database
 import peewee as pw
-import os
 
 # 进行操作的数据对象
 class scrutinizer:
@@ -26,13 +26,6 @@ class scrutinizer:
             exit(1)
 
 
-DATABASE = os.environ.get('database')
-database = pw.SqliteDatabase(DATABASE)
-# TODO: Initialize the database
-
-# model definitions -- the standard "pattern" is to define a base model class
-# that specifies which database to use.  then, any subclasses will automatically
-# use the correct storage.
 class BaseModel(pw.Model):
     class Meta:
         database = database
@@ -40,6 +33,7 @@ class BaseModel(pw.Model):
 
 # 数据结构：检测结果-化学因素表
 class chemical(BaseModel):
+    # TODO: GBZ 2.1后续对应标准值
     unit_name = pw.CharField()
     post = pw.CharField()
     # post = pw.ForeignKeyField("Post")
