@@ -15,7 +15,7 @@
 
 [English](README_en.md) | 简体中文
 
-本项目与2024年大年初一诞生:fireworks::fireworks::fireworks:
+本项目与2024年大年初一诞生`:fireworks:``:fireworks:``:fireworks:`
 
 名字来源：EHS_Scrutinizer（意译：EHS检查器， 音译：EHS莫哭泣）。本软件愿景为杜绝由于粗心大意、概念不清、自以为是等所导致的受到批评、克扣工资乃至提包走人现象的发生，节省泪水，赠你笑容。
 
@@ -52,9 +52,9 @@ EHS Scrutinizer 用于:
 
 ## 安装
 
-[EHS Scrutinizer正式版]() 在Microsoft Store搜索EHS Scrutinizer正式版（未上线:sleepy:）
+[EHS Scrutinizer正式版]() 在Microsoft Store搜索EHS Scrutinizer正式版（未上线`:sleepy:`）
 
-[EHS Scrutinizer试用版]() 在Microsoft Store搜索EHS Scrutinizer试用版（未上线:sleepy:）
+[EHS Scrutinizer试用版]() 在Microsoft Store搜索EHS Scrutinizer试用版（未上线`:sleepy:`）
 
 （开发者）拉取本仓库master分支源代码自行编译构建。
 环境要求：Python3.8+，Windows10+
