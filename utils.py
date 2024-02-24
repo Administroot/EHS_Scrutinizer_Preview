@@ -65,3 +65,12 @@ def fill_null(df: DataFrame) -> DataFrame:
     df.where(df != "/", inplace=True)
     df.where(df != "'--", inplace=True)
     return df
+
+def add_sequence(df: DataFrame) -> DataFrame:
+    """添加序列号
+    :param df: DataFrame
+    :return: 添加序列号后的数据对象
+    """
+    # df["序号"] = range(1, df.shape[0] + 1)
+    df.insert(0, "序号", range(1, df.shape[0]+1))
+    return df
