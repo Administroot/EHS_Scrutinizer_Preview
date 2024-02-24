@@ -2,6 +2,7 @@ import pandas as pd
 import filter.test_results_chemical as test_results_chemical
 from models import scrutinizer
 from config import database
+from query.test_results_compliance import get_table_data, calc_qualified_rate
 
 # 测试数据库
 # db_name = "test.db"
@@ -37,16 +38,9 @@ def show_data(srt: scrutinizer) -> None:
 
 if __name__ == "__main__":
     db_name = "test.db"
-    # db = pw.SqliteDatabase(db_name)
-    # db.connect()
-    # database = pw.SqliteDatabase(DATABASE)
-    # database.connect()
 
     test1_name = "检测结果-化学因素"
     chemical_test = scrutinizer(db_name, test1_name, "test/test.xlsx", 2)
-    # show_data(chemical_test)
     test_results_chemical.df_to_sql(database, chemical_test)
-    # df_to_sql.add_test_results_chemical_PK(db, chemical_test)
 
-    # db.close()
-    # database.close()
+    print(calc_qualified_rate(get_table_data()))
