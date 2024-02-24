@@ -1,7 +1,8 @@
 import pandas as pd
 from utils import format_print
-from config import database
+from config import database, logger_level
 import peewee as pw
+import logging
 
 # 进行操作的数据对象
 class scrutinizer:
@@ -25,7 +26,12 @@ class scrutinizer:
             format_print("ERROR", str(e))
             exit(1)
 
+# 调试时调整logger等级
+logger = logging.getLogger("peewee")
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logger_level)
 
+    
 class BaseModel(pw.Model):
     class Meta:
         database = database
