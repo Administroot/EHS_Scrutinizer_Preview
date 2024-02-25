@@ -42,5 +42,8 @@ def calc_qualified_rate(df: pd.DataFrame) -> pd.DataFrame:
     """
     # 添加一列序号
     df = add_sequence(df)
-    # TODO: 计算合格率
+    # 计算合格率
+    df["合格率"] = df["合格点数"] / df["检测点位数"]
+    df["合格率"] = df["合格率"].apply(lambda x: format(x, ".1%"))
     return df
+

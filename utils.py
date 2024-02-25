@@ -1,4 +1,5 @@
 from pandas import DataFrame, isnull
+
 def df_to_list(df: DataFrame) -> list:
     """dataframe to list
     :param srt: scrutinizer
@@ -65,6 +66,7 @@ def fill_null(df: DataFrame) -> DataFrame:
     df.where(df != "/", inplace=True)
     df.where(df != "'--", inplace=True)
     return df
+
 
 def add_sequence(df: DataFrame) -> DataFrame:
     """添加序列号

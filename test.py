@@ -40,7 +40,10 @@ if __name__ == "__main__":
     db_name = "test.db"
 
     test1_name = "检测结果-化学因素"
-    chemical_test = scrutinizer(db_name, test1_name, "test/test.xlsx", 2)
+    res1_name = "检测结果达标情况一览表"
+
+    chemical_test = scrutinizer(db_name, test1_name, "test/test.xlsx", 2, 'r')
     test_results_chemical.df_to_sql(database, chemical_test)
 
-    print(calc_qualified_rate(get_table_data()))
+    df = calc_qualified_rate(get_table_data())
+    test_results_compliance = scrutinizer(db_name, res1_name, "test/res.xlsx", 0, 'w', df=df)
