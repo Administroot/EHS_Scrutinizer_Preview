@@ -39,6 +39,7 @@ class scrutinizer:
                 self.excel_name, sheet_name=self.sheet_name, skiprows=self.skip_rows
             )
         except Exception as e:
+            # ??: 写入
             format_print("ERROR", str(e))
             exit(1)
 

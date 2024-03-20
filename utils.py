@@ -1,3 +1,4 @@
+from os import replace
 from pandas import DataFrame, isnull
 
 def df_to_list(df: DataFrame) -> list:
@@ -29,7 +30,7 @@ def general_preprocessing_filter(df: DataFrame, column: list) -> DataFrame:
     :param column: 需要进行padding操作的列号
     :return: 过滤处理后的数据对象
     """
-    return fill_null(excel_row_padding(df, column))
+    return null_to_symbol(excel_row_padding(df, column))
 
 def excel_row_padding(df: DataFrame, column: list) -> DataFrame:
     """过滤器：填补合并单元格空值
@@ -57,7 +58,7 @@ def excel_row_padding(df: DataFrame, column: list) -> DataFrame:
     return df
 
 
-def fill_null(df: DataFrame) -> DataFrame:
+def symbol_to_null(df: DataFrame) -> DataFrame:
     """过滤器：填补以 / , '-- 代替的空值
     :param df: DataFrame
     :return: 过滤处理后的数据对象
@@ -75,4 +76,32 @@ def add_sequence(df: DataFrame) -> DataFrame:
     """
     # df["序号"] = range(1, df.shape[0] + 1)
     df.insert(0, "序号", range(1, df.shape[0]+1))
+    return df
+
+
+def general_postprocessing_filter(df: DataFrame) -> DataFrame:
+    """过滤器：通用后处理过滤器
+    :param df: DataFrame
+    :return: 过滤处理后的数据对象
+    """
+    return null_percent_to_symbol(null_to_symbol(df))
+
+
+def null_to_symbol(df: DataFrame) -> DataFrame:
+    """过滤器：以'/' 填补空值
+    :param df: DataFrame
+    :return: 过滤处理后的数据对象
+     """
+    # df.where(df != NaN, '--', inplace=True)
+    # !!: 未来pandas版本'/'不匹配原数据格式float64将会报错。
+    df.fillna('/', inplace=True)
+    return df
+
+
+def null_percent_to_symbol(df: DataFrame) -> DataFrame:
+    """过滤器：以'/'填补nan%
+    :param df: DataFrame
+    :return: 过滤处理后的数据对象
+    """
+    df.replace("nan%", "/", inplace=True)
     return df

@@ -1,7 +1,7 @@
 # 检测结果达标情况一览表
 from peewee import fn, Case
 from models import chemical
-from utils import add_sequence
+from utils import add_sequence, general_postprocessing_filter
 import pandas as pd
 
 
@@ -12,6 +12,7 @@ def get_table_data() -> pd.DataFrame:
             chemical.detection_project,
             fn.count(chemical.detection_project).alias("detection_project_num"),
             fn.count(chemical.post).alias("detection_post_num"),
+            # TODO：如果PC_TWA没有，应该比较MAC
             fn.sum(Case(None, ((chemical.CTWA < chemical.PC_TWA, 1),))).alias(
                 "qualified_points"
             ),
@@ -35,6 +36,16 @@ def get_table_data() -> pd.DataFrame:
     return df
 
 
+def get_df(df: pd.DataFrame) -> pd.DataFrame:
+    """从数据库中获取DataFrame并准备写入EXCEL
+    :param df: sql请求得到的dataframe
+    :return: 准备实例化scrutinizer的dataframe
+    """
+    data = general_postprocessing_filter(calc_qualified_rate(df))
+    return data
+
+########## 后处理过滤器 ###########
+
 def calc_qualified_rate(df: pd.DataFrame) -> pd.DataFrame:
     """计算合格率
     :param df: SQL查询结果
@@ -45,5 +56,5 @@ def calc_qualified_rate(df: pd.DataFrame) -> pd.DataFrame:
     # 计算合格率
     df["合格率"] = df["合格点数"] / df["检测点位数"]
     df["合格率"] = df["合格率"].apply(lambda x: format(x, ".1%"))
-    return df
 
+    return df
