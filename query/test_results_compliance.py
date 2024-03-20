@@ -12,10 +12,37 @@ def get_table_data() -> pd.DataFrame:
             chemical.detection_project,
             fn.count(chemical.detection_project).alias("detection_project_num"),
             fn.count(chemical.post).alias("detection_post_num"),
-            # TODO：如果PC_TWA没有，应该比较MAC
-            fn.sum(Case(None, ((chemical.CTWA < chemical.PC_TWA, 1),))).alias(
-                "qualified_points"
-            ),
+            ## version 1
+            # fn.sum(
+            #     Case(
+            #         chemical.CTWA,
+            #         (
+            #             (
+            #                 chemical.PC_TWA.is_null(False),
+            #                 chemical.CTWA < chemical.PC_TWA,
+            #                 1
+            #             )
+            #         ),
+            #         (chemical.CTWA < chemical.PC_STEL_MAC, 1)
+            #     )
+            # ).alias("qualified_points"),
+            ## version 2
+            # fn.SUM(
+            #     Case(
+            #         None,
+            #         ((chemical.PC_TWA == 0, chemical.CTWA < chemical.PC_TWA),),
+            #         (chemical.CTWA < chemical.PC_STEL_MAC),
+            #     )
+            # ).alias("qualified_points"),
+
+            ## version 3
+            fn.count(
+                Case(
+                    None,
+                    ((chemical.PC_TWA.is_null(False), chemical.CTWA < chemical.PC_TWA),
+                     (chemical.PC_STEL_MAC.is_null(False), chemical.CTWA < chemical.PC_STEL_MAC)),
+                )
+            ).alias("qualified_points"),
         )
         .group_by(chemical.detection_project)
         .order_by(chemical.detection_project)

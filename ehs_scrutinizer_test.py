@@ -36,7 +36,7 @@ def show_data(srt: scrutinizer) -> None:
     print("#" * 40)
     print("\n\n")
 
-
+@pytest.mark.xfail(False, reason="")
 def test_sampling_detection():
     ########## 写入数据 ###########
     test_name = "检测结果-化学因素"
@@ -49,7 +49,8 @@ def test_sampling_detection():
 
     # 获取sqlite数据库数据
     df = get_df(get_table_data())
-    # print(df)
+    print("df", end='\n')
+    print(df)
 
     # 实例化scrutinizer，写入EXCEL
     test_results_compliance = scrutinizer(
@@ -62,7 +63,7 @@ def test_sampling_detection():
     ans_df = pd.read_excel("test/ans.xlsx", sheet_name=res_name)
     # 读取结果EXCEL数据
     res_df = pd.read_excel("test/res.xlsx", sheet_name=res_name)
-    
+
     assert_frame_equal(res_df, ans_df)
 
 
