@@ -66,6 +66,14 @@ def test_sampling_detection():
 
     assert_frame_equal(res_df, ans_df)
 
+# 预期错误的测试（该提交不应该通过CI）
+@pytest.mark.xfail(False, reason="")
+def test_assert_frame_equal():
+    res_name = "检测结果达标情况一览表"
+    ans_df = pd.read_excel("test/ans.xlsx", sheet_name=res_name)
+    res_df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
+    assert_frame_equal(ans_df, res_df)
+
 
 if __name__ == "__main__":
     # pytest.main(["-s", "${0}"])
